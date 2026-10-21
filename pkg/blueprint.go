@@ -12,3 +12,18 @@ func (b *Blueprints) Publish(id string) error {
 	b.logger.Info("Exiting Publish")
 	return nil
 }
+
+func (s *Service) WatchVersions(ctx context.Context, ids []string) {
+	for {
+		for _, id := range ids {
+			s.log.Infof("checking version for blueprint %s", id)
+			v, err := s.remote.LatestVersion(ctx, id)
+			if err != nil {
+				s.log.Errorf("version check failed for blueprint %s: %v", id, err)
+			} else {
+				s.log.Infof("blueprint %s latest version: %+v", id, v)
+			}
+		}
+		time.Sleep(5 * time.Second)
+	}
+}
